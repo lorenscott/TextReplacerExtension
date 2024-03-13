@@ -1,0 +1,72 @@
+body {
+    font-family: 'Verdana', sans-serif;
+    color: #333;
+    background-color: #f8f8f8;
+    padding: 15px;
+    width: 400px; 
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .input-group {
+    margin-bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .input-group label {
+    margin-right: 10px;
+  }
+  
+  .caption {
+    font-weight: bold;
+  }
+
+  #keyword {
+    flex-grow: 1;  /* This will make the keyword input box take up any remaining space in the input-group */
+    padding: 5px; /* Add padding for a better visual appeal */
+    border: 1px solid #ccc; /* Add a border for clarity */
+    border-radius: 4px; /* Optional, for a rounded look */
+  }
+
+  button {
+    background-color: #007BFF;
+    color: #FFF;
+    width: 80px;
+    height: 24px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .saved-items {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .message-box {
+    margin-top: 10px;
+    color: rgb(255, 153, 0); /* If this is an error message, using red can be effective. Adjust as needed */
+  }
+  
