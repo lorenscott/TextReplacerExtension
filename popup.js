@@ -152,3 +152,45 @@ document.getElementById('save').style.display = 'none';
 
 // Call the function to load items when popup is opened
 loadSavedItems();
+
+// Export functionality
+document.getElementById('export').addEventListener('click', function() {
+  chrome.storage.sync.get(null, function(items) {
+    const fileName = "textReplacerBackup.json";
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(items));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", fileName);
+    document.body.appendChild(downloadAnchorNode); // required for Firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  });
+});
+
+// Trigger file input for import
+document.getElementById('import').addEventListener('click', function() {
+  document.getElementById('fileInput').click();
+});
+
+// Import functionality
+document.getElementById('fileInput').addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  if (file && file.type === "application/json") {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const items = JSON.parse(e.target.result);
+      chrome.storage.sync.set(items, function() {
+        if (chrome.runtime.lastError) {
+          console.error('Error importing items: ', chrome.runtime.lastError);
+        } else {
+          showMessage('Items imported successfully.');
+          loadSavedItems(); // Refresh the items list
+        }
+      });
+    };
+    reader.readAsText(file);
+  } else {
+    showMessage('Please select a valid JSON file.');
+  }
+  this.value = ''; // Clear the input after import
+});

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Text Replacer",
-  "version": "1.5",
+  "version": "1.6",
   "description": "Replace keywords with defined text.",
   "permissions": [
     "storage",
