@@ -1,30 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Replacer</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h2>Loren's Text Replacer</h2>
-    <div class="input-group">
-      <label for="keyword"><strong>Keyword:</strong></label>
-      <input id="keyword" type="text" placeholder="(no need for '/')">
-    </div>
-    <div class="input-group">
-      <label for="text"><strong>Text:</strong></label>
-      <textarea rows="6" id="text"></textarea>
-    </div>
-    <div class="button-group">
-      <button id="add">Add</button>
-      <button id="save">Save</button>
-      <button id="import">Import</button>
-      <button id="export">Export</button>
-      <div id="exportConfirmation" class="message-box"></div>      
-    </div>
-    <input type="file" id="fileInput" style="display:none;" accept=".json">
-    <div id="savedItems" class="saved-items"></div>
-    <div id="message" class="message-box"></div>
-  </div>
+  <main class="app-shell">
+    <header class="app-header">
+      <h1>Loren's Text Replacer 2.0</h1>
+      <p>Turn short commands into full text snippets.</p>
+    </header>
+
+    <section class="card composer-card" aria-labelledby="composeHeading">
+      <div class="card-head">
+        <h2 id="composeHeading">Add or Edit Shortcut</h2>
+        <span id="modeBadge" class="mode-badge" aria-live="polite">Add mode</span>
+      </div>
+
+      <form id="entryForm" novalidate>
+        <div class="field-group">
+          <label for="keyword">Keyword</label>
+          <div class="keyword-input-wrap">
+            <span class="input-prefix" aria-hidden="true">/</span>
+            <input id="keyword" name="keyword" type="text" autocomplete="off" placeholder="e.g. standup" maxlength="80">
+          </div>
+          <p id="keywordHint" class="field-hint">Slash is added automatically. Use letters, numbers, dashes, or underscores.</p>
+          <p id="keywordError" class="field-message" aria-live="polite"></p>
+        </div>
+
+        <div class="field-group">
+          <label for="text">Replacement Text</label>
+          <textarea rows="5" id="text" name="text" placeholder="Type the text that should replace this keyword..."></textarea>
+          <p id="textError" class="field-message" aria-live="polite"></p>
+        </div>
+
+        <div class="action-row">
+          <button id="add" type="submit" class="btn btn-primary">Add Shortcut</button>
+          <button id="save" type="submit" class="btn btn-primary">Save Changes</button>
+          <button id="cancelEdit" type="button" class="btn btn-secondary">Cancel</button>
+        </div>
+      </form>
+
+      <div class="utility-row">
+        <button id="import" type="button" class="btn btn-ghost">Import JSON</button>
+        <button id="export" type="button" class="btn btn-ghost">Export JSON</button>
+      </div>
+    </section>
+
+    <section class="card list-card" aria-labelledby="savedHeading">
+      <div class="card-head list-head">
+        <h2 id="savedHeading">Saved Shortcuts</h2>
+        <input id="search" type="search" placeholder="Search keyword or text" aria-label="Search shortcuts">
+      </div>
+      <div id="savedItems" class="saved-items" role="list"></div>
+      <p id="emptyState" class="empty-state">No shortcuts yet. Add your first one above.</p>
+    </section>
+
+    <input type="file" id="fileInput" class="sr-only" accept=".json,application/json">
+    <div id="message" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  </main>
+
   <script src="popup.js"></script>
 </body>
 </html>

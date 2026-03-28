@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Text Replacer",
-  "version": "1.6",
-  "description": "Replace keywords with defined text.",
+  "name": "Loren's Text Replacer",
+  "version": "2.0",
+  "description": "Turn short commands into full text snippets.",
   "permissions": [
     "storage",
     "activeTab" // Ensures access to the current tab; "tabs" might be more than you need.

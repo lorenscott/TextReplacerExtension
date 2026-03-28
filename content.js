@@ -1,32 +1,156 @@
 console.log('content.js has been loaded.');
 
-document.addEventListener('input', function(e) {
-  const target = e.target;
-  
-  console.log('Input event detected on:', target);
-  console.log('Tag name of the target:', target.tagName.toLowerCase());
-  console.log('Is contentEditable:', target.contentEditable);
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
-  if (target.tagName.toLowerCase() === 'input' || 
-      target.tagName.toLowerCase() === 'textarea' || 
-      target.contentEditable === "true") {
-      console.log("Target is an input, textarea, or a contentEditable element.");
-      
-      // Requesting items from the background script
-      chrome.runtime.sendMessage({action: "fetchItems"}, function(response) {
-        console.log("Fetched items from storage:", response.items);
-        
-        let items = response.items;
-        for (let keyword in items) {
-            console.log(`Checking target value: "${target.value}" for keyword: "${keyword}"`);
-
-            if (target.value && target.value.includes(keyword)) {
-                console.log(`Attempting to replace keyword ${keyword} with ${items[keyword]}`);
-                target.value = target.value.replace(keyword, items[keyword]);
-                
-                console.log(`Post-replacement value: "${target.value}"`);
-            }
-        }
-      });
+function applyReplacements(text, items) {
+  if (!text || !items || typeof items !== 'object') {
+    return text;
   }
+
+  const tokenChars = 'A-Za-z0-9_-';
+  const triggerChars = ' \\n\\r';
+  const sortedEntries = Object.entries(items)
+    .filter(([keyword, replacement]) => typeof keyword === 'string' && keyword.startsWith('/') && typeof replacement === 'string')
+    .sort((a, b) => b[0].length - a[0].length);
+
+  let updatedText = text;
+
+  sortedEntries.forEach(([keyword, replacement]) => {
+    // Require a delimiter after the shortcode so typing /test2 is not interrupted at /test.
+    const pattern = new RegExp(`(^|[^${tokenChars}])(${escapeRegex(keyword)})(?=[${triggerChars}])`, 'g');
+    updatedText = updatedText.replace(pattern, function(_, prefix) {
+      return `${prefix}${replacement}`;
+    });
+  });
+
+  return updatedText;
+}
+
+function applyReplacementsWithCaret(text, items, caretStart, caretEnd) {
+  const safeStart = Number.isInteger(caretStart) ? caretStart : text.length;
+  const safeEnd = Number.isInteger(caretEnd) ? caretEnd : safeStart;
+  const replacedText = applyReplacements(text, items);
+
+  const prefixForStart = text.slice(0, safeStart);
+  const prefixForEnd = text.slice(0, safeEnd);
+  const replacedPrefixForStart = applyReplacements(prefixForStart, items);
+  const replacedPrefixForEnd = applyReplacements(prefixForEnd, items);
+
+  return {
+    text: replacedText,
+    caretStart: replacedPrefixForStart.length,
+    caretEnd: replacedPrefixForEnd.length
+  };
+}
+
+function getEditableContext(eventTarget) {
+  const target = eventTarget;
+  const editableTarget = target && typeof target.closest === 'function'
+    ? target.closest('[contenteditable="true"]')
+    : null;
+  const tagName = target && target.tagName ? target.tagName.toLowerCase() : '';
+  const isInput = tagName === 'input';
+  const isTextarea = tagName === 'textarea';
+  const isContentEditable = (target && target.contentEditable === 'true') || Boolean(editableTarget);
+
+  if (!isInput && !isTextarea && !isContentEditable) {
+    return null;
+  }
+
+  return {
+    target,
+    editableTarget,
+    isInput,
+    isTextarea,
+    isContentEditable
+  };
+}
+
+function canUseRuntimeMessaging() {
+  const runtime = getRuntime();
+  return Boolean(runtime && typeof runtime.sendMessage === 'function' && runtime.id);
+}
+
+function getRuntime() {
+  try {
+    return typeof chrome !== 'undefined' && chrome.runtime ? chrome.runtime : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function hasRuntimeMessagingError() {
+  const runtime = getRuntime();
+  if (!runtime) {
+    return true;
+  }
+
+  try {
+    return Boolean(runtime.lastError);
+  } catch (_) {
+    return true;
+  }
+}
+
+function processReplacement(context) {
+  const runtime = getRuntime();
+  if (!runtime || !canUseRuntimeMessaging()) {
+    // During extension reload (or plain page execution), runtime messaging can be unavailable.
+    return;
+  }
+
+  try {
+    runtime.sendMessage({ action: 'fetchItems' }, function(response) {
+      if (hasRuntimeMessagingError()) {
+        return;
+      }
+
+      const items = response && response.items ? response.items : {};
+
+      if (context.isInput || context.isTextarea) {
+        const currentText = context.target.value;
+        const selectionStart = context.target.selectionStart;
+        const selectionEnd = context.target.selectionEnd;
+        const result = applyReplacementsWithCaret(currentText, items, selectionStart, selectionEnd);
+
+        if (result.text !== currentText) {
+          context.target.value = result.text;
+          if (typeof context.target.setSelectionRange === 'function') {
+            context.target.setSelectionRange(result.caretStart, result.caretEnd);
+          }
+          console.log(`Post-replacement value: "${context.target.value}"`);
+        }
+        return;
+      }
+
+      const contentNode = context.editableTarget || context.target;
+      const currentText = contentNode.textContent || '';
+      const replacedText = applyReplacements(currentText, items);
+
+      if (replacedText !== currentText) {
+        contentNode.textContent = replacedText;
+        console.log(`Post-replacement text: "${contentNode.textContent}"`);
+      }
+    });
+  } catch (_) {
+    // Ignore transient runtime errors during extension reload.
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key !== ' ' && e.key !== 'Enter') {
+    return;
+  }
+
+  const context = getEditableContext(e.target);
+  if (!context) {
+    return;
+  }
+
+  // Wait until the key press applies, then expand matching shortcodes.
+  setTimeout(function() {
+    processReplacement(context);
+  }, 0);
 });
