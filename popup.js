@@ -168,6 +168,14 @@ function createSavedItemElement(keyword, text, index) {
   const actions = document.createElement('div');
   actions.className = 'item-actions';
 
+  const copyBtn = document.createElement('button');
+  copyBtn.type = 'button';
+  copyBtn.className = 'item-btn copy';
+  copyBtn.setAttribute('aria-label', `Copy text for ${keyword}`);
+  copyBtn.setAttribute('data-action', 'copy');
+  copyBtn.setAttribute('data-keyword', keyword);
+  copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style="vertical-align:-1px;margin-right:4px"><path d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6z"/><path d="M2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1H2z"/></svg>Copy';
+
   const editBtn = document.createElement('button');
   editBtn.type = 'button';
   editBtn.className = 'item-btn';
@@ -182,6 +190,7 @@ function createSavedItemElement(keyword, text, index) {
   deleteBtn.setAttribute('data-action', 'delete');
   deleteBtn.setAttribute('data-keyword', keyword);
 
+  actions.appendChild(copyBtn);
   actions.appendChild(editBtn);
   actions.appendChild(deleteBtn);
   itemHead.appendChild(keywordChip);
@@ -419,6 +428,15 @@ savedItemsDiv.addEventListener('click', function(event) {
   const action = button.getAttribute('data-action');
   const keyword = button.getAttribute('data-keyword');
   if (!keyword) {
+    return;
+  }
+
+  if (action === 'copy') {
+    navigator.clipboard.writeText(state.items[keyword]).then(function() {
+      showMessage(`Copied ${keyword} to clipboard.`, 'success');
+    }).catch(function() {
+      showMessage('Failed to copy to clipboard.', 'error');
+    });
     return;
   }
 

@@ -346,6 +346,12 @@ button:focus-visible {
   background: #fffafa;
 }
 
+.item-btn.copy {
+  border-color: #bfdcc8;
+  color: var(--success);
+  background: #f4fbf6;
+}
+
 .item-text {
   margin: var(--space-2) 0 0;
   color: var(--text-main);
