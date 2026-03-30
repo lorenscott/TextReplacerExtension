@@ -14,6 +14,8 @@ const emptyState = document.getElementById('emptyState');
 const messageDiv = document.getElementById('message');
 const keywordError = document.getElementById('keywordError');
 const textError = document.getElementById('textError');
+const composerCard = document.getElementById('composerCard');
+const addNewBtn = document.getElementById('addNewBtn');
 
 const state = {
   isEditing: false,
@@ -23,6 +25,16 @@ const state = {
   messageTimer: null,
   isBusy: false
 };
+
+function showComposer() {
+  composerCard.classList.remove('hidden');
+  addNewBtn.classList.add('hidden');
+}
+
+function hideComposer() {
+  composerCard.classList.add('hidden');
+  addNewBtn.classList.remove('hidden');
+}
 
 function normalizeKeyword(rawKeyword) {
   const cleaned = rawKeyword.trim();
@@ -243,6 +255,7 @@ function enterEditMode(keyword, text) {
   textInput.value = text;
   setMode(true);
   clearFieldErrors();
+  showComposer();
   keywordInput.focus();
   keywordInput.select();
 }
@@ -251,6 +264,7 @@ function exitEditMode() {
   state.originalKeyword = null;
   setMode(false);
   clearInputFields();
+  hideComposer();
 }
 
 function addEntry(keyword, text) {
@@ -276,8 +290,8 @@ function addEntry(keyword, text) {
 
       showMessage('Keyword added successfully.', 'success');
       clearInputFields();
+      hideComposer();
       loadSavedItems(keyword);
-      keywordInput.focus();
     });
   });
 }
@@ -510,6 +524,13 @@ fileInput.addEventListener('change', function(event) {
   };
 
   reader.readAsText(file);
+});
+
+addNewBtn.addEventListener('click', function() {
+  setMode(false);
+  clearInputFields();
+  showComposer();
+  keywordInput.focus();
 });
 
 setMode(false);

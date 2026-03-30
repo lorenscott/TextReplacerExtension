@@ -57,7 +57,7 @@ body {
 
 .app-shell {
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto auto auto 1fr auto;
   gap: var(--space-3);
   height: 100%;
   animation: shell-enter 220ms ease-out;
@@ -368,8 +368,16 @@ button:focus-visible {
   color: var(--text-muted);
 }
 
+.hidden {
+  display: none !important;
+}
+
 .empty-state.hidden {
   display: none;
+}
+
+.add-new-btn {
+  width: 100%;
 }
 
 .toast {
