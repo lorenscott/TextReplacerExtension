@@ -43,8 +43,7 @@ body {
 
 body {
   width: 430px;
-  min-height: 560px;
-  max-height: 620px;
+  height: 620px;
   padding: var(--space-4);
   font-family: var(--font-ui);
   color: var(--text-main);
@@ -281,7 +280,6 @@ button:focus-visible {
 
 .saved-items {
   overflow-y: auto;
-  max-height: 240px;
   display: grid;
   gap: var(--space-2);
   padding-right: 2px;

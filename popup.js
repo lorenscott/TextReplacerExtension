@@ -52,7 +52,7 @@ function setMode(isEditing) {
   state.isEditing = isEditing;
   addButton.style.display = isEditing ? 'none' : 'inline-flex';
   saveButton.style.display = isEditing ? 'inline-flex' : 'none';
-  cancelEditButton.style.display = isEditing ? 'inline-flex' : 'none';
+  cancelEditButton.style.display = 'inline-flex';
 
   if (isEditing && state.originalKeyword) {
     modeBadge.textContent = `Editing ${state.originalKeyword}`;
