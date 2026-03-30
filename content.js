@@ -116,9 +116,12 @@ function processReplacement(context) {
         const result = applyReplacementsWithCaret(currentText, items, selectionStart, selectionEnd);
 
         if (result.text !== currentText) {
-          context.target.value = result.text;
+          const trimmedText = result.text.replace(/[ \n\r]+$/, '');
+          context.target.value = trimmedText;
+          const clampedStart = Math.min(result.caretStart, trimmedText.length);
+          const clampedEnd = Math.min(result.caretEnd, trimmedText.length);
           if (typeof context.target.setSelectionRange === 'function') {
-            context.target.setSelectionRange(result.caretStart, result.caretEnd);
+            context.target.setSelectionRange(clampedStart, clampedEnd);
           }
           console.log(`Post-replacement value: "${context.target.value}"`);
         }
@@ -130,7 +133,7 @@ function processReplacement(context) {
       const replacedText = applyReplacements(currentText, items);
 
       if (replacedText !== currentText) {
-        contentNode.textContent = replacedText;
+        contentNode.textContent = replacedText.replace(/[ \n\r]+$/, '');
         console.log(`Post-replacement text: "${contentNode.textContent}"`);
       }
     });
