@@ -15,6 +15,11 @@
 
     <button id="addNewBtn" type="button" class="btn btn-primary add-new-btn">+ Add New Shortcode</button>
 
+    <div class="utility-row">
+      <button id="import" type="button" class="btn btn-ghost">Import JSON</button>
+      <button id="export" type="button" class="btn btn-ghost">Export JSON</button>
+    </div>
+
     <section id="composerCard" class="card composer-card hidden" aria-labelledby="composeHeading">
       <div class="card-head">
         <h2 id="composeHeading">Add or Edit Shortcut</h2>
@@ -45,13 +50,9 @@
         </div>
       </form>
 
-      <div class="utility-row">
-        <button id="import" type="button" class="btn btn-ghost">Import JSON</button>
-        <button id="export" type="button" class="btn btn-ghost">Export JSON</button>
-      </div>
     </section>
 
-    <section class="card list-card" aria-labelledby="savedHeading">
+    <section id="listCard" class="card list-card" aria-labelledby="savedHeading">
       <div class="card-head list-head">
         <h2 id="savedHeading">Saved Shortcuts</h2>
         <input id="search" type="search" placeholder="Search keyword or text" aria-label="Search shortcuts">

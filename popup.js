@@ -15,6 +15,7 @@ const messageDiv = document.getElementById('message');
 const keywordError = document.getElementById('keywordError');
 const textError = document.getElementById('textError');
 const composerCard = document.getElementById('composerCard');
+const listCard = document.getElementById('listCard');
 const addNewBtn = document.getElementById('addNewBtn');
 
 const state = {
@@ -28,11 +29,13 @@ const state = {
 
 function showComposer() {
   composerCard.classList.remove('hidden');
+  listCard.classList.add('hidden');
   addNewBtn.classList.add('hidden');
 }
 
 function hideComposer() {
   composerCard.classList.add('hidden');
+  listCard.classList.remove('hidden');
   addNewBtn.classList.remove('hidden');
 }
 
