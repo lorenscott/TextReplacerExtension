@@ -6,6 +6,15 @@
     <title>Test Page</title>
 </head>
 <body>
-    <textarea id="testinput" rows="10" cols="60" placeholder="Type something here..."></textarea> 
+    <textarea id="testinput" rows="10" cols="60" placeholder="Type something here..."></textarea>
+    <br><br>
+    <button onclick="submitText()">Submit</button>
+    <script>
+        function submitText() {
+            const textarea = document.getElementById('testinput');
+            alert(textarea.value);
+            textarea.value = '';
+        }
+    </script>
 </body>
 </html>

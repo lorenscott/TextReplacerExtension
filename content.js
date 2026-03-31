@@ -118,6 +118,11 @@ function processReplacement(context) {
         if (result.text !== currentText) {
           const trimmedText = result.text.replace(/[ \n\r]+$/, '');
           context.target.value = trimmedText;
+          // Dispatch an input event so React (and similar frameworks) re-sync their
+          // internal state to the new value. Without this, React retains its stale
+          // pre-replacement state and reverts the textarea on save.
+          context.target.dispatchEvent(new Event('input', { bubbles: true }));
+
           const clampedStart = Math.min(result.caretStart, trimmedText.length);
           const clampedEnd = Math.min(result.caretEnd, trimmedText.length);
           if (typeof context.target.setSelectionRange === 'function') {

@@ -5,7 +5,7 @@
   "description": "Turn short commands into full text snippets.",
   "permissions": [
     "storage",
-    "activeTab" // Ensures access to the current tab; "tabs" might be more than you need.
+    "activeTab"
   ],
   "action": {
     "default_popup": "popup.html",
