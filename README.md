@@ -2,7 +2,7 @@
 
 A Chrome extension that expands short `/keyword` commands into full text snippets — instantly, as you type.
 
-**Version 2.15**
+**Version 2.20**
 
 ---
 
@@ -100,6 +100,9 @@ Click **Import JSON** and select a previously exported `.json` file. Imported sh
 ---
 
 ## Changelog
+
+### v2.20
+- Set the initial focus to the Search box
 
 ### v2.15
 - Import/Export buttons now always visible (no longer hidden behind the Add form)

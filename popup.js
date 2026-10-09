@@ -538,3 +538,4 @@ addNewBtn.addEventListener('click', function() {
 
 setMode(false);
 loadSavedItems();
+searchInput.focus();
